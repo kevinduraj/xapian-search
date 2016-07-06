@@ -21,6 +21,7 @@ using boost::property_tree::read_json;
 using boost::property_tree::write_json;
 /*---------------------------------------------------------------------------------------------------------------------*/
 WebPage::WebPage(string xapian_index, string action) {
+
     db.add_database(Xapian::Database(xapian_index));
     this->format = action;
 
@@ -127,22 +128,19 @@ void WebPage::parse_xapian_result(string result) {
     }
     
     if(format == "export") {
-      try { csv << "\"" << pt.get<std::string>("url")         <<  "\","; } catch(...) { csv << "\"1970-01-01\","; }
+      try { csv << "\"" << pt.get<std::string>("url")         <<  "\","; } catch(...) { csv << "\"null\","; }
       try { csv << "\"" << pt.get<std::string>("title")       <<  "\","; } catch(...) { csv << "\"null\","; }
       try { csv << "\"" << pt.get<std::string>("description") <<  "\","; } catch(...) { csv << "\"null\","; }
       csv << endl;
     } 
      
     try { 
-      cout << "<b>url = </b> "  <<  "<a href=http://pacific-design.com/" << pt.get<std::string>("url") << ">" << pt.get<std::string> ("url") << "</a><br>" << endl; 
+      cout << "<b>Title = </b> "  <<  "<a href=http://pacific-design.com/" << pt.get<std::string>("url") << ">" << pt.get<std::string> ("title") << "</a><br>" << endl; 
     } catch(...) { cout << "<b>url = </b> NULL<br>" << endl;  }
 
-    try { 
-      cout << "<b>title = </b> " <<  pt.get<std::string>("title") << "<br>" << endl; 
-    } catch(...) { cout << "<b>title = </b> NULL<br>" << endl;  }
 
     try { 
-      cout << "<b>description = </b>"  <<  pt.get<std::string>("description") << "<br>" << endl;
+      cout << "<b>Description = </b>"  <<  pt.get<std::string>("description") << "<br>" << endl;
     } catch(...) { cout << "<b>description = </b> NULL<br>" << endl;  }
 
 }
@@ -225,4 +223,5 @@ int WebPage::search( string terms, int page, int items ) {
     //  boost::replace_all(result_csv, "\n", ",");
     //  csv << result_csv << endl; 
     //}
+
 ---------------------------------------------------------------------------------------------------------------------------*/

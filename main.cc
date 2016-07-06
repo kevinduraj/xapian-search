@@ -54,7 +54,7 @@ void header(string action, string terms, string format, string page) {
  	     cout << action << endl;
  	 */
 
- 	 cout << "<table width=1200 ><tr><td width=\"170\" align=\"bottom\">";
+ 	 cout << "<table border=1 width=1024 ><tr><td width=\"170\" valign=\"top\">";
 
  	 if(format == "undefined") {
  	     cout << "<form action=\"search\" method=\"get\">"  << endl;

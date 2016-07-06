@@ -1,0 +1,56 @@
+a:link    { color: blue; text-decoration: none  }
+a:hover   { color: red;  text-decoration: none  }
+a:visited { color: red;  text-decoration: none  }
+a:active  { color: black;text-decoration: none  }
+
+h1 {
+    color: navy;
+    margin-left: 20px;
+}
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 8px 9px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    vertical-align: text-top;    
+}
+
+.export {
+    background-color: red; /* Green */
+    border: none;
+    color: white;
+    padding: 8px 9px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    vertical-align: text-top;    
+}
+
+
+body
+{
+  xborder: 1px solid red;
+  text-align: justify;
+  font-family:Verdana, Arial, Helvetica, sans-serif;
+  font-size:.9em;
+  margin: 10px;
+  color: #000;
+  background: oldlace;
+  width:1200px;
+  padding-left: 0.5cm;
+}
+
+.input {
+  height: 38px;
+  font-size: 20px;
+  background-color: #EBFFE0;
+  vertical-align: text-top;
+
+}
+
