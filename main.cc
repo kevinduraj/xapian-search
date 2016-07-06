@@ -54,7 +54,7 @@ void header(string action, string terms, string format, string page) {
  	     cout << action << endl;
  	 */
 
- 	 cout << "<table border=1 width=1024 ><tr><td width=\"170\" valign=\"top\">";
+ 	 cout << "<table width=1024 border=0><tr>";
 
  	 if(format == "undefined") {
  	     cout << "<form action=\"search\" method=\"get\">"  << endl;
@@ -64,8 +64,10 @@ void header(string action, string terms, string format, string page) {
  	     cout << "<form action=\"search?q=" << uri << "\" method=\"get\">"  << endl;
  	 }
 
- 	 cout << "&nbsp;&nbsp;&nbsp;<a href=\"/\"><img src=\"http://pacific-design.com/pacific-design_logo.png\"></a></td><td valign=\"top\"><nobr>" << endl;
- 	 cout << "<input class=\"input\" type=\"text\" name=\"q\" maxlength=\"1000\" size=\"85\" value=\"" << terms << "\" >" << endl;
+   cout << "<td valign=\"middle\"><a href=\"http://pacific-design.com\"><img src=\"pacific-design-com-home.png\"></a></td>";
+   cout << "<td valign=\"top\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
+ 	 cout << "<td valign=\"middle\"><nobr>" << endl;
+ 	 cout << "<input class=\"input\" type=\"text\" name=\"q\" maxlength=\"128\" size=\"80\" value=\"" << terms << "\" >" << endl;
  	 cout << "<input type=\"hidden\" name=\"page\" value=\"" << page << "\">" << endl;
  	 cout << "<button class=\"button\" name=\"action\" type=\"submit\" value=\"search\"/> Search </button>" << endl;
  	 cout << "<button class=\"export\" name=\"action\" type=\"submit\" value=\"export\"/> Export </button></nobr><br>" << endl;
@@ -92,7 +94,8 @@ void footer(string q, int total) {
   }
 
   cout << "<hr><center><table border=0><tr><td valign=top width=\"180\">" << endl;
-  cout << "<td valign=bottom><h4>&copy 2016 pacific-design.com All Rights Reserved.<br>Brought to you by Kevin Duraj</h4>" << endl;
+  cout << "<td valign=bottom><h4>&copy 2016 Pacific-Design.com All Rights Reserved." << endl;
+  cout << "<br>Brought to you by Kevin Duraj since 1997</h4>" << endl;
   cout << "</td></tr></table></center></body></html>" << endl;
 
 }
