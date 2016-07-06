@@ -128,7 +128,6 @@ void WebPage::parse_xapian_result(string result) {
     }
     
     if(format == "export") {
-      try { csv << "\"" << pt.get<std::string>("url")         <<  "\","; } catch(...) { csv << "\"null\","; }
       try { csv << "\"" << pt.get<std::string>("title")       <<  "\","; } catch(...) { csv << "\"null\","; }
       try { csv << "\"" << pt.get<std::string>("description") <<  "\","; } catch(...) { csv << "\"null\","; }
       csv << endl;
@@ -150,7 +149,7 @@ int WebPage::search( string terms, int page, int items ) {
 
     if((format == "export") && (format != "json")) {
       cout << "<h3>Download Link: <a href=\"csv/" << filename << "\">csv/" << filename << "</a></h3><p>" << endl;
-      csv  << "date, platform_content_id, yt_video_title, yt_description, yt_channel_id, yt_category_id"  << endl;
+      csv  << "Title, Description"  << endl;
     }
 
     string key, value, result, delimiter;
