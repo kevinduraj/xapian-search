@@ -135,7 +135,7 @@ void WebPage::parse_xapian_result(string result) {
      
     try { 
       cout << "<b>Title = </b> "  <<  "<a href=http://pacific-design.com/" << pt.get<std::string>("url") << ">" << pt.get<std::string> ("title") << "</a><br>" << endl; 
-    } catch(...) { cout << "<b>url = </b> NULL<br>" << endl;  }
+    } catch(...) { cout << "<b>url = </b><a href=http://pacific-design.com>Pacific-Design.com</a><br>" << endl;  }
 
 
     try { 
