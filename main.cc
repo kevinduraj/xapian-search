@@ -93,9 +93,9 @@ void footer(string q, int total) {
 
   }
 
-  cout << "<hr><center><table border=0><tr><td valign=top width=\"180\">" << endl;
-  cout << "<td valign=bottom><h4>&copy 2016 Pacific-Design.com All Rights Reserved." << endl;
-  cout << "<br>Brought to you by Kevin Duraj since 1997</h4>" << endl;
+  cout << "<hr><p><br><p><center><table border=0 width=\"800\"><tr><td align=center >" << endl;
+  cout << "&copy 2016 Pacific-Design.com All Rights Reserved.</td></tr>" << endl;
+  cout << "<tr><td align=center>Brought to you by Kevin Duraj since 1997 from Los Angeles, CA" << endl;
   cout << "</td></tr></table></center></body></html>" << endl;
 
 }
