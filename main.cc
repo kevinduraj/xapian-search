@@ -17,7 +17,7 @@ using namespace boost;
 using std::string;
 
 static const std::string INDEX  = "/home/design/index";
-static const int PAGE_SIZE      = 10;
+static const int PAGE_SIZE      = 50;
 
 struct tokens: std::ctype<char> 
 {
@@ -70,9 +70,9 @@ void header(string action, string terms, string format, string page) {
  	 cout << "<input class=\"input\" type=\"text\" name=\"q\" maxlength=\"128\" size=\"80\" value=\"" << terms << "\" >" << endl;
  	 cout << "<input type=\"hidden\" name=\"page\" value=\"" << page << "\">" << endl;
  	 cout << "<button class=\"button\" name=\"action\" type=\"submit\" value=\"search\"/> Search </button>" << endl;
- 	 cout << "<button class=\"export\" name=\"action\" type=\"submit\" value=\"export\"/> Export </button></nobr><br>" << endl;
- 	 cout << "<small>Include / Exclude words in search e.g.: (module OR package) NOT (java OR perl)</small></td>";
- 	 cout << "</tr></form></table><hr>" << endl;
+ 	 //cout << "<button class=\"export\" name=\"action\" type=\"submit\" value=\"export\"/> Export </button></nobr><br>" << endl;
+ 	 //cout << "<small>Include / Exclude words in search e.g.: (module OR package) NOT (java OR perl)</small>";
+ 	 cout << "</td></tr></form></table><hr>" << endl;
   }
 }
 /*--------------------------------------------------------------------------------------------------------*/
