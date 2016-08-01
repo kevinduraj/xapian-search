@@ -104,35 +104,25 @@ void WebPage::parse_xapian_json(string result) {
   ----------------------------------------------------------------------------------------------------------------------*/
 void WebPage::parse_xapian_result(string result) {
 
-    boost::replace_all(result, "\n", "|");
-    result.erase(result.length()-1, 1); // erease the last | character
+    //boost::replace_all(result, "\n", "|");
+    //result.erase(result.length()-1, 1); // erease the last | character
 
     vector<string> vector1;
-    boost::split(vector1, result, boost::is_any_of("|"));
+    boost::split(vector1, result, boost::is_any_of("\n"));
 
     ptree pt;   // json
     std::string delimiter = "=";
     size_t pos = 0;
 
     for (vector<string>::iterator it = vector1.begin(); it != vector1.end(); ++it) {
-
-        // cout << *it << "<br>" << endl;
         string value = *it;
         pos = value.find(delimiter);
         std::string key_token = value.substr(0, pos);
-        value.erase(0, pos + 1);
+        value.erase(0, pos + 1); 
         pt.put(key_token, value);
-
-        //if(format == "csv") csv << "\"" << value << "\","; 
-        //cout << key_token << " | " << endl;  // get key
-    }
-    
-    if(format == "export") {
-      try { csv << "\"" << pt.get<std::string>("title")       <<  "\","; } catch(...) { csv << "\"null\","; }
-      try { csv << "\"" << pt.get<std::string>("description") <<  "\","; } catch(...) { csv << "\"null\","; }
-      csv << endl;
+        //cout << key_token << "=" << value << "<br>" << endl;
     } 
-     
+ 
     try { 
       cout << "<b>Title = </b> "  <<  "<a href=http://pacific-design.com/" << pt.get<std::string>("url") << ">" << pt.get<std::string> ("title") << "</a><br>" << endl; 
     } catch(...) { cout << "<b>url = </b><a href=http://pacific-design.com>Pacific-Design.com</a><br>" << endl;  }
