@@ -95,7 +95,7 @@ int WebPage::search( string terms, int page, string sort ) {
     cout << "<div class=text1>" << endl;
     cout << "Searching " << endl;
     printfcomma(db.get_doccount());
-    cout << " videos, about <b>" << endl;
+    cout << " pages, about <b>" << endl;
     printfcomma(total);
     cout << "</b> results found." << endl;
     cout << "<br>Terms: <b>" <<  terms << "</b></div>" << endl;
