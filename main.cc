@@ -17,7 +17,7 @@ using namespace boost;
 using std::string;
 
 static const std::string INDEX  = "/home/design/index";
-static const int PAGE_SIZE      = 50;
+static const int PAGE_SIZE      = 10;
 
 struct tokens: std::ctype<char> 
 {
@@ -39,13 +39,9 @@ struct tokens: std::ctype<char>
 /*--------------------------------------------------------------------------------------------------------*/
 void header(string action, string terms, string format, string page) {
 
-  if(action == "json") {
- 	cout << "Content-type: application/json\r\n\r\n";
-
-  } else {
- 	 cout << "Content-type: text/html\r\n\r\n";
- 	 cout << "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"stylesheet.css\"></head>" << endl;
- 	 cout << "<body>\n";
+ 	cout << "Content-type: text/html\r\n\r\n";
+ 	cout << "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"stylesheet.css\"></head>" << endl;
+ 	cout << "<body>\n";
 
  	 /* DEBUG
  	     char InputData[4096];
@@ -54,26 +50,23 @@ void header(string action, string terms, string format, string page) {
  	     cout << action << endl;
  	 */
 
- 	 cout << "<table width=1024 border=0><tr>";
+ 	cout << "<table width=1024 border=0><tr>";
 
- 	 if(format == "undefined") {
- 	     cout << "<form action=\"search\" method=\"get\">"  << endl;
- 	 } else {
- 	     string uri = terms;
- 	     boost::replace_all(uri, " ", "+");
- 	     cout << "<form action=\"search?q=" << uri << "\" method=\"get\">"  << endl;
- 	 }
+    if(format == "null") { cout << "<form action=\"search\" method=\"get\">"  << endl; }
+    else {
+         string uri = terms;
+         boost::replace_all(uri, " ", "+");
+         cout << "<form action=\"search?q=" << uri << "\" method=\"get\">"  << endl;
+    }
 
-   cout << "<td valign=\"middle\"><a href=\"http://pacific-design.com\"><img src=\"pacific-design-com-home.png\"></a></td>";
-   cout << "<td valign=\"top\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
- 	 cout << "<td valign=\"middle\"><nobr>" << endl;
- 	 cout << "<input class=\"input\" type=\"text\" name=\"q\" maxlength=\"128\" size=\"80\" value=\"" << terms << "\" >" << endl;
- 	 cout << "<input type=\"hidden\" name=\"page\" value=\"" << page << "\">" << endl;
- 	 cout << "<button class=\"button\" name=\"action\" type=\"submit\" value=\"search\"/> Search </button>" << endl;
- 	 //cout << "<button class=\"export\" name=\"action\" type=\"submit\" value=\"export\"/> Export </button></nobr><br>" << endl;
- 	 //cout << "<small>Include / Exclude words in search e.g.: (module OR package) NOT (java OR perl)</small>";
- 	 cout << "</td></tr></form></table><hr>" << endl;
-  }
+    cout << "<td valign=\"middle\"><a href=\"http://pacific-design.com\"><img src=\"pacific-design-com-home.png\"></a></td>";
+    cout << "<td valign=\"top\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
+ 	cout << "<td valign=\"middle\"><nobr>" << endl;
+ 	cout << "<input class=\"input\" type=\"text\" name=\"q\" maxlength=\"100\" size=\"95\" value=\"" << terms << "\" >" << endl;
+ 	cout << "<input type=\"hidden\" name=\"page\" value=\"" << page << "\">" << endl;
+ 	cout << "<button class=\"button\" name=\"action\" type=\"submit\" value=\"search\"/> Search </button>" << endl;
+ 	cout << "</td></tr></form></table><hr>" << endl;
+
 }
 /*--------------------------------------------------------------------------------------------------------*/
 void footer(string q, int total) {
@@ -87,7 +80,8 @@ void footer(string q, int total) {
     if(last_page > 2001) last_page = 2001;
 
     cout << "<hr>" << endl;
-    for(int i=1; i < last_page; i++) {
+
+    for(int i=1; i <= last_page; i++) {
       cout << "<a href=\"http://pacific-design.com/search?q=" << q << "&page=" << i << "\">" << i << "</a> " << endl; 
     }
 
@@ -103,24 +97,30 @@ void footer(string q, int total) {
 
 void web_search() {
 
-  char q[1024]; char format[32]; char page[32]; char action[32];
+  char q[512]; 
+  char format[16]; 
+  char page[16]; 
+  char action[16]; 
+  char sort[16];
 
   int total = 0;
 
   getAllParams();
-  getParam("q", q);
+  getParam("q", q); string query(q);
   getParam("format", format);
   getParam("page", page);
   getParam("action", action);
+  getParam("sort", sort);
 
+  if(strcmp (page,"null") == 0) strcpy(page, "1");
 
-  if(strcmp (page,"undefined") == 0) strcpy(page, "1");
   header(action, q, format, page);
 
-  if(strcmp (q,"undefined") != 0) {
+  if(strcmp (q,"null") != 0) {
  
     WebPage * video = new WebPage(INDEX, action);
-    total = video->search(q, atoi(page), PAGE_SIZE);
+    //total = video->search(q, atoi(page), PAGE_SIZE);
+    total = video->search(query, atoi(page), sort);
     delete video;
 
   } else { cout << "<h2>Please enter search query</h2>" << endl; }

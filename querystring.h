@@ -70,7 +70,8 @@ void getParam(const char *Name, char *Value)
     }  
   } 
 
-  strcpy(Value, "undefined");	// If param not found, then use default parameter 
+  strcpy(Value, "null");
+
   return; 
 } 
 /*-------------------------------------------------------------------------------------------*/

@@ -19,90 +19,23 @@
 using boost::property_tree::ptree;
 using boost::property_tree::read_json;
 using boost::property_tree::write_json;
+
 /*---------------------------------------------------------------------------------------------------------------------*/
 WebPage::WebPage(string xapian_index, string action) {
 
     db.add_database(Xapian::Database(xapian_index));
     this->format = action;
 
-    if(format == "export") {
-      filename = random_string(12);
-      path = "/home/design/www/csv/" + filename;
-      csv.open(path);
-    }
 }
 /*----------------------------------------------------------------------------------------------------------------------*/
 WebPage::~WebPage() {
 
     if(format == "export") csv.close();
 }
-/*----------------------------------------------------------------------------------------------------------------------*/
-void WebPage::myjson(string str) {
-
-    ptree pt;
-    pt.put ("foo", "bar");
-    std::ostringstream buf; 
-    write_json (buf, pt, false);
-    std::string json = buf.str();
-    cout << json << endl;
-}
-/*----------------------------------------------------------------------------------------------------------------------*/
-string WebPage::random_string(size_t length) {
-
-    srand(time(0));
-    //Generate random string for filename
-    auto randchar = []() -> char {
-        const char charset[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
-        const size_t max_index = (sizeof(charset) - 1);
-        return charset[ rand() % max_index ];
-    };
-    std::string str(length,0);
-    std::generate_n( str.begin(), length, randchar );
-    return str + ".csv";
-}
-/*----------------------------------------------------------------------------------------------------------------------
-                               Parsing Query Result and Returning JSON
-  ----------------------------------------------------------------------------------------------------------------------*/
-void WebPage::parse_xapian_json(string result) {
-
-    boost::replace_all(result, "\n", "|");
-    result.erase(result.length()-1, 1); // erease the last | character
-
-    vector<string> vector1;
-    boost::split(vector1, result, boost::is_any_of("|"));
-
-    ptree pt;   // json
-    std::string delimiter = "=";
-    size_t pos = 0;
-
-    //ptree * children = new ptree(); 
-    ptree * child    = new ptree(); 
-    
-    for (vector<string>::iterator it = vector1.begin(); it != vector1.end(); ++it) {
-
-        string value = *it;
-        pos = value.find(delimiter);
-        std::string key_token = value.substr(0, pos);
-        value.erase(0, pos + 1);
-        //pt.put(key_token, value);
-        child->put(key_token, value);
-    }
-    
-    children.push_back(std::make_pair("", *child));
-    delete child;
-
-    //ptJson.add_child("Document", *children);
-    //delete children;
-    //write_json(std::cout, pt);
-
-}
 /*----------------------------------------------------------------------------------------------------------------------
   if((format == "search") || (format == "export")) 
   ----------------------------------------------------------------------------------------------------------------------*/
-void WebPage::parse_xapian_result(string result) {
+void WebPage::parse_xapian_result(string terms, string result)  {
 
     //boost::replace_all(result, "\n", "|");
     //result.erase(result.length()-1, 1); // erease the last | character
@@ -118,10 +51,10 @@ void WebPage::parse_xapian_result(string result) {
         string value = *it;
         pos = value.find(delimiter);
         std::string key_token = value.substr(0, pos);
-        value.erase(0, pos + 1); 
+        value.erase(0, pos + 1);
         pt.put(key_token, value);
         //cout << key_token << "=" << value << "<br>" << endl;
-    } 
+    }
  
     try { 
       cout << "<b>Title = </b> "  <<  "<a href=http://pacific-design.com/" << pt.get<std::string>("url") << ">" << pt.get<std::string> ("title") << "</a><br>" << endl; 
@@ -134,17 +67,11 @@ void WebPage::parse_xapian_result(string result) {
 
 }
 /*--------------------------------------------------------------------------------------------------------------------------*/
-int WebPage::search( string terms, int page, int items ) {
-
-
-    if((format == "export") && (format != "json")) {
-      cout << "<h3>Download Link: <a href=\"csv/" << filename << "\">csv/" << filename << "</a></h3><p>" << endl;
-      csv  << "Title, Description"  << endl;
-    }
+int WebPage::search( string terms, int page, string sort ) {
 
     string key, value, result, delimiter;
 
-    int start  =  (page * items) - items + 1 ;
+    int start  =  (page * PAGE_SIZE) - PAGE_SIZE + 1 ;
     if(start < 1) { start = 1; }
 
     // ------------------------------//
@@ -155,50 +82,54 @@ int WebPage::search( string terms, int page, int items ) {
 
     Xapian::Enquire enquire(db);
     enquire.set_query(query);
-    //enquire.set_sort_by_value_then_relevance(1, 1);
 
-    Xapian::MSet mset = enquire.get_mset(start-1, items);
-    int total         = mset.get_matches_estimated();
-
-    if (format != "json") {
-
-    	cout << query.get_description() << "<br>" << endl;
-    	cout << "Page=<b>" << page << "</b>&nbsp;&nbsp;&nbsp;Start=<b>" << start << "</b><br>" << endl; 
-	    cout << "Seaching "  << db.get_doccount()  << " pages for: <b>" << terms 
-	         << "</b> about <b>" << total << "</b> results found." << endl;
+    if (sort.compare("true") == 0) {
+        enquire.set_sort_by_value_then_relevance(1, 1);
     }
+
+    mset = enquire.get_mset(start-1, PAGE_SIZE);
+    int total  = mset.get_matches_estimated();
+
+    //cout << query.get_description() << "<br>" << endl;
+    cout << "<div class=text1>" << endl;
+    cout << "Searching " << endl;
+    printfcomma(db.get_doccount());
+    cout << " videos, about <b>" << endl;
+    printfcomma(total);
+    cout << "</b> results found." << endl;
+    cout << "<br>Terms: <b>" <<  terms << "</b></div>" << endl;
 
     int counter=start;
 
-    if(format == "json") ptJson.put("EstimatedTotal", total);
-
     for (Xapian::MSetIterator i = mset.begin(); i != mset.end(); i++) {
 
-      Xapian::Document doc = i.get_document();
+        Xapian::Document doc = i.get_document();
+        //for( Xapian::TermIterator t = doc.termlist_begin(); t != doc.termlist_end(); t++) cout << *t << "<br>" << endl;
 
-    	if (format != "json") {
-      		cout  << "<hr><b>" << counter << ".</b>&nbsp;&nbsp<b>Relevance</b> = " << i.get_percent() 
-		            << "%&nbsp;|&nbsp<b>Terms</b> = " <<  doc.termlist_count() << "</b>&nbsp;|&nbsp<p>\n" << endl;
-    	} //else {
-        //if(json_first > 0 ) cout << ","; 
-  		  //json_first++; 
-	      // }
- 
-    	result = doc.get_data();
-    	if(format == "json") parse_xapian_json(result); 
-      else parse_xapian_result(result);
-    	counter++;
+        cout  << "<hr><div class=text1><b>" << counter << ".</b>&nbsp;&nbsp<b>Relevance</b>=" << i.get_percent() << "%</div>" << endl;
+
+        result = doc.get_data();
+        parse_xapian_result(terms, result);
+        counter++;
+
     } /* end of iterator if stattement */
-
-    if(format == "json") {
-      ptJson.add_child("WebPage", children);
-      write_json(std::cout, ptJson); 
-    }
-
-    //if(format == "json") cout << "] }" << endl;					
 
     return total;
 
+}
+/*----------------------------------------------------------------------------------------------------------------------*/
+void WebPage::printfcomma (int n) {
+    if (n < 0) {
+        printf ("-");
+        printfcomma (-n);
+        return;
+    }
+    if (n < 1000) {
+        printf ("%d", n);
+        return;
+    }
+    printfcomma (n/1000);
+    printf (",%03d", n%1000);
 }
 /*---------------------------------------------------------------------------------------------------------------------------
 

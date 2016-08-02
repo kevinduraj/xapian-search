@@ -25,14 +25,14 @@ using namespace std;
 using std::string;
 using namespace Xapian;
 
-using boost::property_tree::ptree;
-using boost::property_tree::read_json;
-using boost::property_tree::write_json;
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 class WebPage
 {
 
 private:
+  
+    static const int PAGE_SIZE = 10;
+    Xapian::MSet mset;
 
 	string xapian_index;
 	Xapian::Database db;
@@ -46,23 +46,15 @@ private:
 	string filename;
 	string path;
 	ofstream csv;
-
-	void myjson(string str);
-	string random_string(size_t length);
-	void parse_xapian_result( string result );
-	void parse_xapian_json(string result);
-
-  ptree ptJson;
-  ptree children;
-  //ptree child1, child2, child3;
-
+    void parse_xapian_result( string terms, string result );
+    void printfcomma (int n);
 
 public:
 
 	WebPage(string xapian_index, string action);
 	~WebPage();
 
-	int search( string terms, int page, int items );
+  int search( string terms, int page, string sort );
 	void browse_records( Database &db );
 };
 
