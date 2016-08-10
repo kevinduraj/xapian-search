@@ -46,6 +46,8 @@ private:
 	string filename;
 	string path;
 	ofstream csv;
+
+    void highlighter( string terms, string text );
     void parse_xapian_result( string terms, string result );
     void printfcomma (int n);
 

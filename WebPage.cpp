@@ -14,8 +14,17 @@
 #include <fstream>
 #include <sstream>
 #include <map>
-#include <boost/property_tree/ptree.hpp>
+
+#include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/tokenizer.hpp>
+
+using namespace boost::algorithm;
+using namespace std;
+using namespace boost;
+
 /*---------------------------------------------------------------------------------------------------------------------*/
 using boost::property_tree::ptree;
 using boost::property_tree::read_json;
@@ -33,6 +42,20 @@ WebPage::~WebPage() {
 
     if(format == "export") csv.close();
 }
+/*---------------------------------------------------------------------------------------------------------------------
+                                       Search Terms Highlighter
+  ---------------------------------------------------------------------------------------------------------------------*/
+void WebPage::highlighter(string terms, string text) {
+
+    char_separator<char> sep(" ");
+    tokenizer<char_separator<char> > tokens(terms, sep);
+
+    BOOST_FOREACH(string term, tokens) {
+        boost::ireplace_all(text, term, "<mark>" + term + "</mark>");
+    }   
+    cout << text << endl;
+}
+
 /*----------------------------------------------------------------------------------------------------------------------
   if((format == "search") || (format == "export")) 
   ----------------------------------------------------------------------------------------------------------------------*/
@@ -63,7 +86,12 @@ void WebPage::parse_xapian_result(string terms, string result)  {
 
 
     try { 
+      //cout << "<b>Description = </b>"  <<  pt.get<std::string>("description") << "<br>" << endl;
       cout << "<b>Description = </b>"  <<  pt.get<std::string>("description") << "<br>" << endl;
+      string description =  pt.get<std::string>("description"); 
+      highlighter(terms, description);
+      cout << "<br>" << endl;
+
     } catch(...) { cout << "<b>description = </b> NULL<br>" << endl;  }
 
 }
